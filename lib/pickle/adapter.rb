@@ -106,11 +106,15 @@ module Pickle
     # factory-girl adapter
     class FactoryGirl < Adapter
       def self.factories
-        (::Factory.factories.values rescue []).map {|factory| new(factory)}
+        [].tap do |factories_array |
+          ::FactoryGirl.factories.each do |factory|
+            factories_array << new(factory)
+          end
+        end
       end
 
       def initialize(factory)
-        @klass, @name = factory.build_class, factory.factory_name.to_s
+        @klass, @name = factory.build_class, factory.name.to_s
       end
 
       def create(attrs = {})
